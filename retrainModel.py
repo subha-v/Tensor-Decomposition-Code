@@ -1,6 +1,6 @@
 from transformers import TrainingArguments
 from transformers import Trainer
-from dataset import *
+from utils.dataset import *
 
 def retrain_vit_model(model, prepared_ds, epochs=2, output_dir="/content/drive/MyDrive/UCSB 2023/Code/ALIGN/ViT Retrained Model Layers 0to17"):
     training_args = TrainingArguments(

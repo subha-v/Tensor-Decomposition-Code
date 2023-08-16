@@ -1,4 +1,4 @@
-from methods import *
+from utils.methods import *
 import os
 import numpy as np
 from transformers import ViTFeatureExtractor, ViTForImageClassification

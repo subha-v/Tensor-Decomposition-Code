@@ -1,6 +1,6 @@
-from methods import *
+from utils.methods import *
 import numpy as np
-from weights import *
+from utils.weights import *
 
 def save_reshaped_weights(model, num_layers):
     for i in range(0, num_layers):
