@@ -22,12 +22,16 @@ reshape_and_save_weights(model, num_layers)
 fully_decomposed_model = iteratively_decompose(model, num_layers)
 
 # Decompose weights until the accuracy goes below 80%
+list_of_layers = []
 
 for i in range(0, num_layers):
     list_of_layers.append(i)
-    matrix_hats_dict = create_matrix_hats_dict(list_of_layers)
+    print(list_of_layers)
 
-    decomposed_model = update_multiple_layers(model, matrix_hats_dict)
+    matrix_hat = np.load(f"/content/vit_decomposed/layer_{list_of_layers[i]}_matrix.np.npy")
+
+    decomposed_model = update_single_layer(model, matrix_hat, i)
+
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     decomposed_model.to(device)
 
@@ -45,4 +49,4 @@ for i in range(0, num_layers):
 
     print("Updated List of Layers: ", list_of_layers)
 
-    model = default_model
+    model = decomposed_model
