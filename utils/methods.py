@@ -23,18 +23,22 @@ def update_multiple_layers(model, matrix_hats_dict, loaded_layer_names):
     for layer_num, matrix_hat in matrix_hats_dict.items():
         if layer_num > 1000:
             continue
-        # layer_num = layer_num+101
-        # print(matrix_hats_dict)
+
         print("Updating this layer", layer_num)
         print("Dimensions", matrix_hat.shape)
+
         # Setting matrices
         matrix_hat = torch.from_numpy(matrix_hat)
         layer_string = loaded_layer_names[layer_num]
+
+
+        print("Shape of decomposed weight", matrix_hat.shape)
 
         # Getting model subset
         layer_component_array = split_string_by_period(layer_string)
         model_subset = get_subset_of_model(layer_component_array, model)
 
+        print("Shape of model weight", (model_subset).shape)
         # Update Model Weights
         with torch.no_grad():
             layer = (
@@ -88,7 +92,7 @@ def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_na
     print("Compression Ratio:", compression_ratio)
     print("Amount of the original:", space_saving)
     # space_savings.append(space_saving)
-    
+
     os.makedirs("/content/vit_decomposed/", exist_ok=True)
     np.save(f"/content/vit_decomposed/layer_{layer_number}_matrix.np", matrix_hat)
 

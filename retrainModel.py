@@ -35,3 +35,8 @@ def retrain_vit_model(model, prepared_ds, epochs=2, output_dir="/content/drive/M
     trainer.log_metrics("train", train_results.metrics)
     trainer.save_metrics("train", train_results.metrics)
     trainer.save_state()
+
+    best_model_dir = trainer.state.best_model_checkpoint
+    updated_model = model.__class__.from_pretrained(best_model_dir)
+
+    return updated_model
