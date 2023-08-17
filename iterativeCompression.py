@@ -2,7 +2,7 @@ from utils.methods import *
 import numpy as np
 from utils.weights import *
 
-def save_reshaped_weights(model, num_layers):
+def reshape_and_save_weights(model, num_layers):
     for i in range(0, num_layers):
         reshape_weights(model, i, 0.5)
     
@@ -16,4 +16,4 @@ def iteratively_decompose(model, num_layers):
     decomposed_model = update_multiple_layers(model, matrix_hats_dict)
     return decomposed_model
 
-   
+

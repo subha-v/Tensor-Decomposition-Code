@@ -3,19 +3,18 @@ import numpy as np
 from transformers import ViTFeatureExtractor, ViTForImageClassification
 import torch
 
-def create_and_save_weights_vit(path="/content/weights/"):
-
-    data = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
-
-    model_name_or_path = 'aaraki/vit-base-patch16-224-in21k-finetuned-cifar10'
-    # feature_extractor = ViTFeatureExtractor.from_pretrained(model_name_or_path)
-    model = ViTForImageClassification.from_pretrained(
+data = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
+model_name_or_path = 'aaraki/vit-base-patch16-224-in21k-finetuned-cifar10'
+default_model = ViTForImageClassification.from_pretrained(
         model_name_or_path,
         num_labels=10,  # Assuming CIFAR-10 has 10 classes
         id2label={str(i): c for i, c in enumerate(data)},  # data is the list of classes ['airplane', 'automobile', ...]
         label2id={c: str(i) for i, c in enumerate(data)}
     )
 
+def create_and_save_weights_vit(model=default_model, path="/content/weights/"):
+   
+    # Load the model
     device = torch.device("cpu")
     model.to(device)
 
