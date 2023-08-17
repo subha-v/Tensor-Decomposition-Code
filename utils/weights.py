@@ -18,8 +18,7 @@ def create_and_save_weights_vit(model=default_model, path="/content/weights/"):
     device = torch.device("cpu")
     model.to(device)
 
-    # Save the weights for each parameter that ends in ".weight"
-    os.mkdir(path)
+    # Make the path ./content/weights manually
     for name, param in model.named_parameters():
         if param.requires_grad and name.endswith(".weight"):
             weight_data = param.detach().numpy()
@@ -39,3 +38,5 @@ def create_and_save_weights_vit(model=default_model, path="/content/weights/"):
             layer_weights = np.load(file_path)
             loaded_layers.append(layer_weights)
             loaded_layer_names.append(name)
+
+    return loaded_layers, loaded_layer_names

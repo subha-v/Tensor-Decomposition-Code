@@ -2,9 +2,9 @@ from utils.methods import *
 import numpy as np
 from utils.weights import *
 
-def reshape_and_save_weights(model, num_layers):
+def reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_names):
     for i in range(0, num_layers):
-        reshape_weights(model, i, 0.5)
+        reshape_weights(model, i, 0.5, loaded_layers, loaded_layer_names)
     
 matrix_hats_dict = {}
 
