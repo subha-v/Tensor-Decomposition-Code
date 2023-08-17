@@ -7,32 +7,6 @@ import numpy as np
 import tensorlearn
 import math
 
-def calculate_accuracy(total_examples, model, dataset, feature_extractor):
-    correct_predictions = 0
-
-    for i in range(total_examples):
-        # Assuming the dataset contains 'img' and 'label' keys
-        image = dataset["test"][i]["img"]
-        label = dataset["test"][i]["label"]
-
-        # Preprocess the image
-        inputs = feature_extractor(images=image, return_tensors="pt")
-
-        # Move the input tensor to GPU (if available)
-        if torch.cuda.is_available():
-            inputs = {key: value.cuda() for key, value in inputs.items()}
-
-        # Run inference
-        outputs = model(**inputs)
-        predicted_label = torch.argmax(outputs.logits).item()
-
-        # Compare predicted and ground truth labels
-        if predicted_label == label:
-            correct_predictions += 1
-
-    accuracy = correct_predictions / total_examples
-    return accuracy
-
 
 def split_string_by_period(string):
     return string.split(".")
@@ -114,12 +88,7 @@ def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_na
     print("Compression Ratio:", compression_ratio)
     print("Amount of the original:", space_saving)
     # space_savings.append(space_saving)
-
-    # output_directory = '/content/drive/MyDrive/UCSB 2023/Code/ALIGN/Decomposed Numpy Weights/ViT_weights/'
-    # output_dir = f'/content/drive/MyDrive/UCSB 2023/Code/ALIGN/Decomposed Numpy Weights/ViT_weights/layer_{layer_number}_matrix.npy'
-
-    # output_file = f'layer_{layer_number}_matrix.npy'
-
+    
     os.makedirs("/content/vit_decomposed/", exist_ok=True)
     np.save(f"/content/vit_decomposed/layer_{layer_number}_matrix.np", matrix_hat)
 
