@@ -23,6 +23,7 @@ def create_and_save_weights_vit(model=default_model, path="/content/weights/"):
         if param.requires_grad and name.endswith(".weight"):
             weight_data = param.detach().numpy()
             # Create the folder weights first
+            os.makedirs(path, exist_ok=True)
             file_path = os.path.join(path, f"{name}.npy")
             np.save(file_path, weight_data)
             print(f"Saved weights for {name} to {file_path}")
