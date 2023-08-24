@@ -7,7 +7,6 @@ import numpy as np
 import tensorlearn
 import math
 
-
 def split_string_by_period(string):
     return string.split(".")
 
@@ -96,7 +95,7 @@ def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_na
     # space_savings.append(space_saving)
 
     os.makedirs(f"/content/vit_decomposed_{folder_num}/", exist_ok=True)
-    np.save(f"/content/vit_decomposed_{folder_num}/layer_{layer_number}_matrix.np", matrix_hat)
+    np.save(f"/content/vit_decomposed_{folder_num}/layer_{layer_number}_matrix", matrix_hat)
 
     return epsilon, dimensions, matrix_hat
 

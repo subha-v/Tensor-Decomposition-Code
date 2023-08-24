@@ -9,12 +9,12 @@ def reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_name
     
 matrix_hats_dict = {}
 
-def iteratively_decompose(model, num_layers, folder_number):
+def iteratively_decompose(model, num_layers, folder_number, loaded_layer_names):
     for i in range(0, num_layers):
         temp_array = np.load(f"/content/vit_decomposed_{folder_number}/layer_{i}_matrix.npy")
         matrix_hats_dict[i] = temp_array
 
-    decomposed_model = update_multiple_layers(model, matrix_hats_dict)
+    decomposed_model = update_multiple_layers(model, matrix_hats_dict, loaded_layer_names)
     return decomposed_model
 
 
@@ -45,7 +45,7 @@ def update_single_layer(model, matrix_hat, layer_num, loaded_layer_names):
   return decomposed_model
 
 
-def iterative_compression_with_threshold(model, num_layers, list_of_layers, accuracy_threshold, folder_num):
+def iterative_compression_with_threshold(model, num_layers, list_of_layers, accuracy_threshold, loaded_layer_names, folder_num):
   list_of_layers = []
   
   for i in range(0, num_layers):
@@ -54,7 +54,7 @@ def iterative_compression_with_threshold(model, num_layers, list_of_layers, accu
 
       matrix_hat = np.load(f"/content/vit_decomposed_{folder_num}/layer_{list_of_layers[i]}_matrix.npy")
 
-      decomposed_model = update_single_layer(model, matrix_hat, i)
+      decomposed_model = update_single_layer(model, matrix_hat, i, loaded_layer_names)
 
       device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
       decomposed_model.to(device)
@@ -70,9 +70,7 @@ def iterative_compression_with_threshold(model, num_layers, list_of_layers, accu
           
       else:
           pass
-
-      j+=1
-
+      
       print("Updated List of Layers: ", list_of_layers)
 
       model = decomposed_model
