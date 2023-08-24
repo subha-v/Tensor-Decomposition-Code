@@ -15,38 +15,19 @@ j=0
 prepared_ds = create_vit_dataset_for_training()
 
 # Saving and creating weights
-create_and_save_weights_vit()
 
-# Fully decomposing the model
-reshape_and_save_weights(model, num_layers)
-fully_decomposed_model = iteratively_decompose(model, num_layers)
 
-# Decompose weights until the accuracy goes below 80%
-list_of_layers = []
+for i in range (0,2):
+    loaded_layers, loaded_layer_names = create_and_save_weights_vit(model, f"/content/weights_{i}/")
 
-for i in range(0, num_layers):
-    list_of_layers.append(i)
-    print(list_of_layers)
+    # We use i to keep track of the folder number
+    # Fully decomposing the model
 
-    matrix_hat = np.load(f"/content/vit_decomposed/layer_{list_of_layers[i]}_matrix.np.npy")
+    reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_names, i)
+    fully_decomposed_model = iteratively_decompose(model, num_layers, i)
 
-    decomposed_model = update_single_layer(model, matrix_hat, i)
+    # Decompose weights until the accuracy goes below 80%
+    low_accuracy_model = iterative_compression_with_threshold(model, num_layers, list_of_layers, 0.9, i)
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    decomposed_model.to(device)
-
-    decomposed_accuracy = calculate_accuracy(30, decomposed_model)
-
-    print("Original List of Layers", list_of_layers)
-    print("Decomposed Accuracy", decomposed_accuracy)
-
-    if decomposed_accuracy < 0.8:
-        print(f"Decomposed accuracy is below 0.8 for layer {i}. Stopping the loop.")
-    else:
-        pass
-
-    j+=1
-
-    print("Updated List of Layers: ", list_of_layers)
-
-    model = decomposed_model
+    # Retraining the model to regain accuracy
+    model = retrain_vit_model(low_accuracy_model, prepared_ds, 0.2)

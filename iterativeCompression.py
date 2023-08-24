@@ -3,15 +3,15 @@ import numpy as np
 from utils.weights import *
 from utils.calculateAccuracy import *
 
-def reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_names):
+def reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_names, folder_num):
     for i in range(0, num_layers):
-        reshape_weights(model, i, 0.5, loaded_layers, loaded_layer_names)
+        reshape_weights(model, i, 0.5, loaded_layers, loaded_layer_names, folder_num)
     
 matrix_hats_dict = {}
 
-def iteratively_decompose(model, num_layers):
+def iteratively_decompose(model, num_layers, folder_number):
     for i in range(0, num_layers):
-        temp_array = np.load(f"/content/vit_decomposed/layer_{i}_matrix.npy")
+        temp_array = np.load(f"/content/vit_decomposed_{folder_number}/layer_{i}_matrix.npy")
         matrix_hats_dict[i] = temp_array
 
     decomposed_model = update_multiple_layers(model, matrix_hats_dict)
@@ -45,14 +45,14 @@ def update_single_layer(model, matrix_hat, layer_num, loaded_layer_names):
   return decomposed_model
 
 
-def iterative_compression_with_threshold(model, num_layers, list_of_layers, accuracy_threshold):
+def iterative_compression_with_threshold(model, num_layers, list_of_layers, accuracy_threshold, folder_num):
   list_of_layers = []
   
   for i in range(0, num_layers):
       list_of_layers.append(i)
       print(list_of_layers)
 
-      matrix_hat = np.load(f"/content/vit_decomposed/layer_{list_of_layers[i]}_matrix.np.npy")
+      matrix_hat = np.load(f"/content/vit_decomposed_{folder_num}/layer_{list_of_layers[i]}_matrix.npy")
 
       decomposed_model = update_single_layer(model, matrix_hat, i)
 
@@ -64,8 +64,8 @@ def iterative_compression_with_threshold(model, num_layers, list_of_layers, accu
       print("Original List of Layers", list_of_layers)
       print("Decomposed Accuracy", decomposed_accuracy)
 
-      if decomposed_accuracy < 0.8:
-          print(f"Decomposed accuracy is below 0.8 for layer {i}. Stopping the loop.")
+      if decomposed_accuracy < accuracy_threshold:
+          print(f"Decomposed accuracy is below {accuracy_threshold} for layer {i}. Stopping the loop.")
           return decomposed_model
           
       else:

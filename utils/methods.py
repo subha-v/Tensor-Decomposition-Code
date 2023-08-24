@@ -60,13 +60,15 @@ def update_multiple_layers(model, matrix_hats_dict, loaded_layer_names):
     return decomposed_model
 
 
-def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_names):
+def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_names, folder_num):
+    
     original_dimensions = original_dimensions = list(loaded_layers[layer_number].shape)
     layer_component_array = split_string_by_period(loaded_layer_names[layer_number])
     model_subset = get_subset_of_model(layer_component_array, model)
     layer_1_weights_3d = (
         model_subset.detach().cpu().numpy()
-    )  # Move tensor to CPU memory
+    )  
+    # Move tensor to CPU memory
     # Calculate the volume of the array
     volume = np.prod(layer_1_weights_3d.shape)
     layer_string = loaded_layer_names[layer_number]
@@ -93,8 +95,8 @@ def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_na
     print("Amount of the original:", space_saving)
     # space_savings.append(space_saving)
 
-    os.makedirs("/content/vit_decomposed/", exist_ok=True)
-    np.save(f"/content/vit_decomposed/layer_{layer_number}_matrix.np", matrix_hat)
+    os.makedirs(f"/content/vit_decomposed_{folder_num}/", exist_ok=True)
+    np.save(f"/content/vit_decomposed_{folder_num}/layer_{layer_number}_matrix.np", matrix_hat)
 
     return epsilon, dimensions, matrix_hat
 
@@ -158,7 +160,7 @@ def create_matrix_hats_dict(list_of_layers):
             continue
         # print(layer_num)
         temp_array = np.load(
-            f"/content/vit_decomposed/layer_{list_of_layers[i]}_matrix.np.npy"
+            f"/content/vit_decomposed/layer_{list_of_layers[i]}_matrix.npy"
         )
         matrix_hats_dict[i] = temp_array
         i += 1
