@@ -2,7 +2,8 @@ from transformers import TrainingArguments
 from transformers import Trainer
 from utils.dataset import *
 
-def retrain_vit_model(model, prepared_ds, epochs=2, output_dir="/content/drive/MyDrive/UCSB 2023/Code/ALIGN/ViT Retrained Model Layers 0to17"):
+def retrain_vit_model(model, prepared_ds, epochs=2, output_dir="/content/drive/MyDrive/UCSB 2023/Code/ViT/saved_models"):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     training_args = TrainingArguments(
     output_dir=output_dir,
     per_device_train_batch_size=16,
@@ -21,7 +22,7 @@ def retrain_vit_model(model, prepared_ds, epochs=2, output_dir="/content/drive/M
     )
 
     trainer = Trainer(
-    model=model,
+    model=model.to(device),
     args=training_args,
     data_collator=collate_fn,
     compute_metrics=compute_metrics,
