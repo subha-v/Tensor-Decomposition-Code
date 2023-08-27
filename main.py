@@ -24,7 +24,6 @@ for i in range (0,2):
     # Fully decomposing the model
 
     reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_names, i)
-    fully_decomposed_model = iteratively_decompose(model, num_layers, i)
 
     # Decompose weights until the accuracy goes below 80%
     low_accuracy_model = iterative_compression_with_threshold(model, num_layers, list_of_layers, 0.9, i)
