@@ -6,6 +6,7 @@ import os
 import numpy as np
 import tensorlearn
 import math
+import pandas as pd
 
 def split_string_by_period(string):
     return string.split(".")
@@ -23,21 +24,21 @@ def update_multiple_layers(model, matrix_hats_dict, loaded_layer_names):
         if layer_num > 1000:
             continue
 
-        print("Updating this layer", layer_num)
-        print("Dimensions", matrix_hat.shape)
+        # print("Updating this layer", layer_num)
+        # print("Dimensions", matrix_hat.shape)
 
         # Setting matrices
         matrix_hat = torch.from_numpy(matrix_hat)
         layer_string = loaded_layer_names[layer_num]
 
 
-        print("Shape of decomposed weight", matrix_hat.shape)
+        # print("Shape of decomposed weight", matrix_hat.shape)
 
         # Getting model subset
         layer_component_array = split_string_by_period(layer_string)
         model_subset = get_subset_of_model(layer_component_array, model)
 
-        print("Shape of model weight", (model_subset).shape)
+        # print("Shape of model weight", (model_subset).shape)
         # Update Model Weights
         with torch.no_grad():
             layer = (
@@ -60,7 +61,7 @@ def update_multiple_layers(model, matrix_hats_dict, loaded_layer_names):
 
 
 def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_names, folder_num):
-    
+    space_savings = []
     original_dimensions = original_dimensions = list(loaded_layers[layer_number].shape)
     layer_component_array = split_string_by_period(loaded_layer_names[layer_number])
     model_subset = get_subset_of_model(layer_component_array, model)
@@ -90,9 +91,25 @@ def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_na
     # Finding Compression Ratio and Space Saving
     compression_ratio = tensorlearn.tt_compression_ratio(factors2)
     space_saving = 1 - (1 / tensorlearn.tt_compression_ratio(factors2))
-    print("Compression Ratio:", compression_ratio)
-    print("Amount of the original:", space_saving)
-    # space_savings.append(space_saving)
+    #print("Compression Ratio:", compression_ratio)
+    #print("Amount of the original:", space_saving)
+    space_savings.append(space_saving)
+
+    # Create a DataFrame to store the data
+    data = {'Layer Number': [layer_number], 'Space Saving': [space_saving]}
+    df = pd.DataFrame(data)
+
+    # Create a spreadsheet filename
+    spreadsheet_filename = f"space_savings_{folder_num}.xlsx"
+
+    # Save the data to the spreadsheet
+    if not os.path.exists(spreadsheet_filename):
+        df.to_excel(spreadsheet_filename, index=False)
+    else:
+        # If the spreadsheet already exists, append the data to it
+        existing_df = pd.read_excel(spreadsheet_filename)
+        updated_df = pd.concat([existing_df, df], ignore_index=True)
+        updated_df.to_excel(spreadsheet_filename, index=False)
 
     os.makedirs(f"/content/vit_decomposed_{folder_num}/", exist_ok=True)
     np.save(f"/content/vit_decomposed_{folder_num}/layer_{layer_number}_matrix", matrix_hat)

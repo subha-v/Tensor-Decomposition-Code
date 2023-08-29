@@ -24,7 +24,7 @@ def update_single_layer(model, matrix_hat, layer_num, loaded_layer_names):
   layer_string = loaded_layer_names[layer_num]
 
 
-  print("Shape of decomposed weight", matrix_hat.shape)
+  # print("Shape of decomposed weight", matrix_hat.shape)
 
   # Getting model subset
   layer_component_array = split_string_by_period(layer_string)

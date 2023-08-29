@@ -26,7 +26,7 @@ def create_and_save_weights_vit(model=default_model, path="/content/weights/"):
             os.makedirs(path, exist_ok=True)
             file_path = os.path.join(path, f"{name}.npy")
             np.save(file_path, weight_data)
-            print(f"Saved weights for {name} to {file_path}")
+            #print(f"Saved weights for {name} to {file_path}")
 
     model_dir = path  # Specify the directory to save the weight files
 
