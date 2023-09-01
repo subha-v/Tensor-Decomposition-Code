@@ -83,7 +83,7 @@ def reshape_weights(model, layer_number, epsilon, loaded_layers, loaded_layer_na
 
     # Reshape back to the original size
     matrix_hat = np.reshape(layer_1_weights_3d_prime, original_dimensions)
-    print("Reshaped to original", matrix_hat.shape)
+    #print("Reshaped to original", matrix_hat.shape)
 
     # Saving matrix hat as a numpy array
     dimensions_string = "_".join(map(str, dimensions))

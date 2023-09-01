@@ -2,6 +2,9 @@ from utils.methods import *
 import numpy as np
 from utils.weights import *
 from utils.calculateAccuracy import *
+import pandas as pd
+
+accuracies_df = pd.DataFrame(columns=['Iteration', 'Decomposed_Accuracy'])
 
 def reshape_and_save_weights(model, num_layers, loaded_layers, loaded_layer_names, folder_num):
     for i in range(0, num_layers):
@@ -61,12 +64,15 @@ def iterative_compression_with_threshold(model, num_layers, list_of_layers, accu
 
       decomposed_accuracy = calculate_accuracy(30, decomposed_model)
 
+      accuracies_df = accuracies_df.append({'Iteration': i, 'Decomposed_Accuracy': decomposed_accuracy}, ignore_index=True)
+      accuracies_df.to_excel("/content/accuracies.xls", index=False)  # Save to Excel file
+
       print("Original List of Layers", list_of_layers)
       print("Decomposed Accuracy", decomposed_accuracy)
 
       if decomposed_accuracy < accuracy_threshold:
           print(f"Decomposed accuracy is below {accuracy_threshold} for layer {i}. Stopping the loop.")
-          return decomposed_model
+          return decomposed_model, list_of_layers
           
       else:
           pass
